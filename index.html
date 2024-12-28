@@ -3,144 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form to Google Sheets</title>
+    <title>Submit to Google Sheets</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
+            margin: 50px;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
             padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .form-container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
+        label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #333;
+            margin: 10px 0 5px;
         }
-
-        .form-group input, .form-group textarea {
+        input[type="text"], input[type="tel"], button {
             width: 100%;
             padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ccc;
+            margin: 10px 0;
+            border: 1px solid #ddd;
             border-radius: 5px;
         }
-
-        .form-group textarea {
-            resize: vertical;
-            height: 100px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
+        button {
+            background-color: #28a745;
             color: white;
-            font-size: 16px;
-            border-radius: 5px;
+            border: none;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
-
-        .submit-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .message {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .message.success {
-            color: green;
-        }
-
-        .message.error {
-            color: red;
+        button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Submit Your Details</h2>
-        <form id="dataForm">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required>
-            </div>
-            <div class="form-group">
-                <label for="maiid">Email ID</label>
-                <input type="email" id="maiid" name="maiid" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <label for="mobile">Mobile</label>
-                <input type="text" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" placeholder="Enter your address" required>
-            </div>
-            <div class="form-group">
-                <label for="query">Query</label>
-                <textarea id="query" name="query" placeholder="Enter your query" required></textarea>
-            </div>
-            <button type="submit" class="submit-btn">Submit</button>
-            <div class="message" id="message"></div>
-        </form>
-    </div>
+    <h1>Submit Data</h1>
+    <form id="googleForm">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        
+        <label for="mobile">Mobile</label>
+        <input type="tel" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
+        
+        <button type="submit">Submit</button>
+    </form>
+
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxuFOHraCuLqMlBhPiejQNs-NhrO-t0NSgh5x_Xi0_5sXoa_ZgY54v_99QO6bpcIE1hWA/exec";
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyXRraeZZDW4ZvZqLG6wJJhE2r6Ivrg9aHHBav5EVqEr0UegRK-Khb-Aj_fmvrO1vwclg/exec';
+        const form = document.getElementById('googleForm');
 
-        document.getElementById('dataForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const form = event.target;
-            const messageDiv = document.getElementById('message');
-
-            // Collect form data
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent the form from refreshing the page
             const formData = new FormData(form);
 
-            try {
-                // POST the data to the Google Apps Script URL
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    messageDiv.textContent = "Data submitted successfully!";
-                    messageDiv.className = "message success";
-                    form.reset();
-                } else {
-                    throw new Error("Failed to submit data");
-                }
-            } catch (error) {
-                messageDiv.textContent = error.message;
-                messageDiv.className = "message error";
-
-                // Display an error pop-up
-                alert("An error occurred while submitting the form: " + error.message);
-            }
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                alert('Success! Data has been submitted.');
+                form.reset();
+            })
+            .catch(error => {
+                alert('Error! Data submission failed.');
+                console.error('Error:', error);
+            });
         });
     </script>
 </body>
